@@ -13,7 +13,7 @@ import {
 
 //// EsLint ////
 /* eslint-disable 
-    @typescript-eslint/no-explicit-any,
+    @typescript-eslint/no-explicit-any
 */
 
 //// Helper Types ////
@@ -33,7 +33,7 @@ interface Each extends Omit<EachEnumerableInheritedKey, '_options'> {
     <T>(arrayLike: ArrayLike<T>): EachIterable<T>
 
     /**
-     * Iterate given a constructor function that returns an iterable.
+     * Iterate given a factory function that returns an iterable.
      */
     <T>(iterableFactory: () => Iterable<T>): EachIterable<T>
 
