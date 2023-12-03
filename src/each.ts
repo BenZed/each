@@ -2,8 +2,8 @@ import { isFunc, isArrayLike, isIterable } from '@benzed/types'
 
 import { EachIterable } from './each-iterable'
 
-import { eachObjectInPrototypeChain, eachValue } from './generators'
-import { EachEnumerableInheritedKey } from './each-key-interface'
+import { eachObjectInPrototypeChain } from './generators'
+import { EachEnumerableInheritedKey } from './each-key'
 import {
     eachIndex,
     Indexable,
@@ -18,10 +18,13 @@ import {
 
 //// Helper Types ////
 
-type Iterables = Iterable<any>[]
-
-type IterableYield<T extends Iterables> = T[number] extends Iterable<infer Tx>
-    ? Tx
+type EachYield<T extends any[]> = T extends [infer F, ...infer R]
+    ? F extends
+          | Iterable<infer Tx>
+          | ArrayLike<infer Tx>
+          | Record<PropertyKey, infer Tx>
+        ? Tx | EachYield<R>
+        : F | EachYield<R>
     : never
 
 //// Hero Type ////
@@ -38,19 +41,19 @@ interface Each extends Omit<EachEnumerableInheritedKey, '_options'> {
     <T>(iterableFactory: () => Iterable<T>): EachIterable<T>
 
     /**
-     * Iterate each element of any number of iterables
-     */
-    <T extends Iterables>(...items: T): EachIterable<IterableYield<T>>
-
-    /**
      * Iterate through each value on an object.
      */
     <T extends object>(object: T): EachIterable<T[keyof T]>
 
     /**
+     * Iterate each element of any number of iterables
+     */
+    <T extends any[]>(...targets: T): EachIterable<EachYield<T>>
+
+    /**
      * Iterate through each prototype chain of any number of objects
      */
-    prototypeOf<T extends object[]>(...objects: T): EachIterable<object>
+    prototypeOf(...objects: object[]): EachIterable<object>
 
     indexOf<T extends Indexable>(
         arrayLike: T,
@@ -60,20 +63,23 @@ interface Each extends Omit<EachEnumerableInheritedKey, '_options'> {
 
 //// Hero signature ////
 
-function each(...items: Iterables | [ArrayLike<unknown>] | [object]) {
+function each(...items: any[]) {
+    const isIterableGetter = isFunc<() => Iterable<unknown>>
+
     for (const index of eachIndex(items)) {
         const item = items[index]
 
+        // cast to iterable
         if (!isIterable(item)) {
             items[index] = isArrayLike(item)
                 ? Array.from(item)
-                : isFunc(item)
+                : isIterableGetter(item)
                 ? item()
-                : eachValue(item)
+                : [item]
         }
     }
 
-    return new EachIterable(items as Iterables)
+    return new EachIterable(...items)
 }
 
 /** Hero {@link Each} interface implementation */
@@ -123,6 +129,7 @@ function each(...items: Iterables | [ArrayLike<unknown>] | [object]) {
             EachEnumerableInheritedKey.prototype,
             'own'
         ) as PropertyDescriptor,
+
         defined: Object.getOwnPropertyDescriptor(
             EachEnumerableInheritedKey.prototype,
             'defined'

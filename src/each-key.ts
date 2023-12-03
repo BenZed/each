@@ -34,7 +34,7 @@ abstract class EachKey {
 
     keyOf<T extends object[]>(...objects: T): EachIterable<Keys<T>> {
         return new EachIterable(
-            objects.map(object =>
+            ...objects.map(object =>
                 eachKey(object, { type: KeyType.Key, ...this._options })
             )
         )
@@ -42,7 +42,7 @@ abstract class EachKey {
 
     nameOf<T extends object[]>(...objects: T): EachIterable<Names<T>> {
         return new EachIterable(
-            objects.map(object =>
+            ...objects.map(object =>
                 eachKey(object, { type: KeyType.Name, ...this._options })
             )
         )
@@ -50,7 +50,7 @@ abstract class EachKey {
 
     symbolOf<T extends object[]>(...objects: T): EachIterable<Symbols<T>> {
         return new EachIterable(
-            objects.map(object =>
+            ...objects.map(object =>
                 eachKey(object, { type: KeyType.Symbol, ...this._options })
             )
         )
@@ -58,7 +58,7 @@ abstract class EachKey {
 
     valueOf<T extends object[]>(...objects: T): EachIterable<Values<T>> {
         return new EachIterable(
-            objects.map(object =>
+            ...objects.map(object =>
                 eachValue(object, { type: KeyType.Key, ...this._options })
             )
         )
@@ -68,7 +68,7 @@ abstract class EachKey {
         ...objects: T
     ): EachIterable<Entries<T[number]>> {
         return new EachIterable(
-            objects.map(object =>
+            ...objects.map(object =>
                 eachEntry(object, { type: KeyType.Key, ...this._options })
             )
         )
@@ -78,7 +78,7 @@ abstract class EachKey {
         ...objects: T
     ): EachIterable<[Keys<T>, PropertyDescriptor]> {
         return new EachIterable(
-            objects.map(object =>
+            ...objects.map(object =>
                 eachDescriptor(object, { type: KeyType.Key, ...this._options })
             )
         )

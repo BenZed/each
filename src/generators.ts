@@ -116,9 +116,18 @@ export function* eachDescriptor(
 
     const iteratedKeys: Set<string | symbol> = new Set()
 
+    // if (!includeSymbols && !includeNonEnumerable && includeInherited)
+    //      keys = Object.keys(object)
+    // else if (!includeNames && includeNonEnumerable && !includeInherited)
+    //      keys = Object.getOwnPropertySymbols(object)
+    // else if (!includeSymbols && includeNonEnumerable && !includeInherited)
+    //      keys = Object.getOwnPropertyNames(object)
+    // else if (includeNames && includeSymbols && )
+
     for (const current of eachObjectInPrototypeChain(object)) {
         if (current === Object.prototype) break
 
+        // FIXME: Should not be getting all the descriptors at once. Use 'Reflect.ownKeys'
         const descriptors = Object.getOwnPropertyDescriptors(current)
 
         if (includeNames) {
@@ -150,10 +159,9 @@ export function* eachDescriptor(
 export function* eachObjectInPrototypeChain(
     object: object
 ): IterableIterator<object> {
-    let current = object
-    while (current) {
-        yield current
-        current = Object.getPrototypeOf(current)
+    while (object) {
+        yield object
+        object = Object.getPrototypeOf(object)
     }
 }
 

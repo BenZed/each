@@ -1,4 +1,4 @@
-import { eachKey, KeyType } from './generators'
+import { eachKey, eachObjectInPrototypeChain, KeyType } from './generators'
 
 import { it, expect } from '@jest/globals'
 
@@ -64,6 +64,11 @@ it('each enumerable inherited name (key..in)', () => {
         own: false
     })
     expect(Array.from(keys)).toEqual(['value'])
+})
+
+it.skip(Reflect.ownKeys.name, () => {
+    for (const proto of eachObjectInPrototypeChain(extend))
+        console.log(Reflect.ownKeys(proto))
 })
 
 it('each enumerable own name', () => {

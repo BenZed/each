@@ -6,12 +6,12 @@ import { describe, it, expect } from '@jest/globals'
 
 describe('iterate', () => {
     it('should return an empty iterator when called with no arguments', () => {
-        const iterator = new EachIterable([])
+        const iterator = new EachIterable()
         expect(iterator.next().done).toBe(true)
     })
 
     it('should return an iterator with the same number of items as the number of arguments', () => {
-        const iterator = new EachIterable([[1, 2, 3]])
+        const iterator = new EachIterable([1, 2, 3])
         expect(iterator.next().done).toBe(false)
         expect(iterator.next().done).toBe(false)
         expect(iterator.next().done).toBe(false)
@@ -26,7 +26,7 @@ describe('iterate', () => {
             [2, 'two'],
             [3, 'three']
         ])
-        const iterator = new EachIterable<unknown>([arr, set, map])
+        const iterator = new EachIterable<unknown>(arr, set, map)
 
         expect(iterator.next().value).toBe(1)
         expect(iterator.next().value).toBe(2)
@@ -48,7 +48,7 @@ describe('iterate', () => {
             [2, 'two'],
             [3, 'three']
         ])
-        const iterator = new EachIterable<unknown>([arr, set, map])
+        const iterator = new EachIterable<unknown>(arr, set, map)
 
         const expectedValues = [
             1,
@@ -70,20 +70,14 @@ describe('iterate', () => {
 
 describe('map', () => {
     it('convenience method that sends each item through a mapping method', () => {
-        const x2 = new EachIterable([
-            [1, 2, 3],
-            [4, 5, 6]
-        ]).map(x => x * 2)
-        expect(x2).toEqual([2, 4, 6, 8, 10, 12])
+        const x2 = new EachIterable([1, 2, 3], [4, 5, 6]).map(x => x * 2)
+        expect([...x2]).toEqual([2, 4, 6, 8, 10, 12])
     })
 })
 
 describe('filter', () => {
     it('convenience method that sends each item through a mapping method', () => {
-        const x2 = new EachIterable([
-            [1, 2, 3],
-            [4, 5, 6]
-        ]).filter(x => x > 3)
-        expect(x2).toEqual([4, 5, 6])
+        const x2 = new EachIterable([1, 2, 3], [4, 5, 6]).filter(x => x > 3)
+        expect([...x2]).toEqual([4, 5, 6])
     })
 })

@@ -57,7 +57,7 @@ const extend = new Extend()
 //// Tests ////
 
 it(each.name, () => {
-    expect(each([1], ['ace']).toArray()).toEqual([1, 'ace'])
+    expect(each([1], true).toArray()).toEqual([1, true])
 })
 
 describe(each.keyOf.name, () => {

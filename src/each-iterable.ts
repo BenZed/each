@@ -26,9 +26,9 @@ type Sorter<T> = (a: T, b: T) => number
 export class EachIterable<T> {
     private _current: Iterator<T> | nil
     private _iterables: Iterable<T>[]
-    constructor(_iterables: Iterable<T>[]) {
+    constructor(...iterables: Iterable<T>[]) {
         this._current = nil
-        this._iterables = _iterables
+        this._iterables = iterables
     }
 
     //// Iterator Implementation ////
@@ -74,7 +74,7 @@ export class EachIterable<T> {
 
     map<R>(mapper: Mapper<T, R>): EachIterable<R> {
         const output = this._applyAsArray().map(mapper)
-        return new EachIterable([output])
+        return new EachIterable(output)
     }
 
     sort(sorter: Sorter<T>): EachIterable<T> {
@@ -108,9 +108,8 @@ export class EachIterable<T> {
     // TODO: return each Collection
     do(...withEach: [WithEach<T>, ...WithEach<T>[]]): EachIterable<T> {
         const array = this._applyAsArray()
-        for (const method of withEach) {
-            array.forEach(method)
-        }
+        for (const method of withEach) array.forEach(method)
+
         return this
     }
     find<Tx extends T>(typeGuard: (value: T) => value is Tx): Tx | nil
